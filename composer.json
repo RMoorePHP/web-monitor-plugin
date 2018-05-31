@@ -1,0 +1,13 @@
+{
+    "name": "rmoore/web-monitor",
+    "description": "Performance monitoring for laravel applications",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Robert Moore",
+            "email": "robert@sliske.uk"
+        }
+    ],
+    "require": {}
+}
