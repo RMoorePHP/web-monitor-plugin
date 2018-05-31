@@ -25,7 +25,7 @@ class Middleware
             if (function_exists('report')) {
                 report($e);
             } else {
-                Log::error($e->getMessage());
+                resolve('log')->error($e->getMessage());
             }
         }
 
