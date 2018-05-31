@@ -52,7 +52,7 @@ class Monitor
                 'queries' => $this->queries,
 
                 'request' => [
-                    'user_id' => optional($request->user())->getKey(),
+                    'user_id' => auth()->id(),
                     'server' => $request->server('HOSTNAME'),
                     'method' => $request->method(),
                     'url' => $request->root(),
