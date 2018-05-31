@@ -22,7 +22,11 @@ class Middleware
         try {
             $monitor->send(['response' => $result]);
         } catch (\Exception $e) {
-            report($e);
+            if (function_exists('report')) {
+                report($e);
+            } else {
+                Log::error($e->getMessage());
+            }
         }
 
         return $result;
