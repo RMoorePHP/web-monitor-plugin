@@ -39,32 +39,22 @@ class Monitor
         $request = request();
         $response = $data['response'];
 
-        (new Client(['base_uri' => config('web-monitor.base_url')]))->post('/api/requests', [
-            'headers' => [
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json',
-            ],
-            'auth' => [
-                config('web-monitor.client_id'),
-                config('web-monitor.client_secret'),
-            ],
-            'json' => [
-                'queries' => $this->queries,
+        SendToServer::dispatch([
+            'queries' => $this->queries,
 
-                'request' => [
-                    'user_id' => auth()->id(),
-                    'server' => $request->server('HOSTNAME'),
-                    'method' => $request->method(),
-                    'url' => $request->root(),
-                    'uri' => $request->path(),
-                    'content_type' => $request->getContentType(),
-                    'request_length' => strlen($request->getContent()),
-                    'response_code' => $response->getStatusCode(),
-                    'response_length' => strlen($response->getContent()),
-                    'started_at_epoch' => $request->server('REQUEST_TIME_FLOAT'),
-                    'finished_at_epoch' => microtime(true),
-                ],
+            'request' => [
+                'user_id' => auth()->id(),
+                'server' => $request->server('HOSTNAME'),
+                'method' => $request->method(),
+                'url' => $request->root(),
+                'uri' => $request->path(),
+                'content_type' => $request->getContentType(),
+                'request_length' => strlen($request->getContent()),
+                'response_code' => $response->getStatusCode(),
+                'response_length' => strlen($response->getContent()),
+                'started_at_epoch' => $request->server('REQUEST_TIME_FLOAT'),
+                'finished_at_epoch' => microtime(true),
             ],
-        ]);
+        ])->onQueue(config('web-monitor.queue'));
     }
 }
