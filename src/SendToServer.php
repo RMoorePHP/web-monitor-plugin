@@ -2,6 +2,7 @@
 
 namespace RMoore\WebMonitor;
 
+use GuzzleHttp\Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
