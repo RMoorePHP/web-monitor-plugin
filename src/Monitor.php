@@ -17,13 +17,27 @@ class Monitor
             if (!$this->enabled) {
                 return;
             }
+            
+            foreach ($query->bindings as $i => $binding) {
+                if ($binding instanceof \DateTime) {
+                    $query->bindings[ $i ] = $binding->format('\'Y-m-d H:i:s\'');
+                } else {
+                    if (is_string($binding)) {
+                        $query->bindings[ $i ] = "'$binding'";
+                    }
+                }
+            }
+
+            $boundSql = str_replace(['%', '?'], ['%%', '%s'], $query->sql);
+            $boundSql = vsprintf($boundSql, $query->bindings);
+
 
             $endTime = microtime(true);
 
             $this->queries[] = [
                 'database' => $query->connectionName,
                 'driver' => 'mysql',
-                'query' => $query->sql,
+                'query' => $boundSql,
                 'started_at_epoch' => $endTime - ($query->time / 1000),
                 'finished_at_epoch' => $endTime,
             ];
