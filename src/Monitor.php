@@ -38,6 +38,10 @@ class Monitor
 
         $request = request();
         $response = $data['response'];
+        
+        $path = $request->path();
+        if ($path == 'graphql' && $request->operationName) 
+            $path .= '.' . $request->operationName;
 
         SendToServer::dispatch([
             'queries' => $this->queries,
@@ -47,7 +51,7 @@ class Monitor
                 'server' => $request->server('HOSTNAME'),
                 'method' => $request->method(),
                 'url' => $request->root(),
-                'uri' => $request->path(),
+                'uri' => $path,
                 'content_type' => $request->getContentType(),
                 'request_length' => strlen($request->getContent()),
                 'response_code' => $response->getStatusCode(),
