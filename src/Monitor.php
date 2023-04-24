@@ -40,8 +40,8 @@ class Monitor
         $response = $data['response'];
         
         $path = $request->path();
-        if ($path == 'graphql' && $request->operationName) 
-            $path .= '.' . $request->operationName;
+        if ($path == '/graphql' && $request->operationName) 
+            $path = 'graphql.' . $request->operationName;
 
         SendToServer::dispatch([
             'queries' => $this->queries,
