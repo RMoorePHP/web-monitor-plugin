@@ -48,7 +48,7 @@ class Monitor
 
             'request' => [
                 'user_id' => auth()->id(),
-                'server' => $request->server('HOSTNAME'),
+                'server' => $request->server('HOSTNAME') ?? $_ENV['HOSTNAME'],
                 'method' => $request->method(),
                 'url' => $request->root(),
                 'uri' => $path,
