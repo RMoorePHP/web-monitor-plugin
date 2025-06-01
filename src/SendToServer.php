@@ -8,6 +8,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
+use Illuminate\Queue\Middleware\RateLimited;
+use Illuminate\Queue\Middleware\RateLimitedWithRedis;
+
 class SendToServer implements ShouldQueue
 {
     protected $data;
@@ -43,5 +46,18 @@ class SendToServer implements ShouldQueue
             ],
             'json' => $this->data,
         ]);
+    }
+
+    public function middleware(): array
+    {
+        $rateLimitClass = RateLimited::class;
+
+        if (config('queue.default') === 'redis') {
+            $rateLimitClass = RateLimitedWithRedis::class;
+        }
+
+        return [
+            (new $rateLimitClass('web-monitor:send-to-server'))->releaseAfter(60),
+        ];
     }
 }

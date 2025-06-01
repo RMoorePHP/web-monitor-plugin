@@ -4,6 +4,9 @@ namespace RMoore\WebMonitor;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
+
 class ServiceProvider extends BaseServiceProvider
 {
     public function boot()
@@ -15,6 +18,10 @@ class ServiceProvider extends BaseServiceProvider
         $this->publishes([
             __DIR__.'/../config/web-monitor.php' => config_path('web-monitor.php')
         ], 'config');
+
+        RateLimiter::for('web-monitor:send-to-server', function(SendToServer $job) {
+            return Limit::perMinute(100)->by(1);
+        });
     }
 
     public function register()
