@@ -38,9 +38,9 @@ class Monitor
 
         $request = request();
         $response = $data['response'];
-        
+
         $path = $request->path();
-        if ($path == 'graphql' && $request->operationName) 
+        if ($path == 'graphql' && $request->operationName)
             $path = 'graphql.' . $request->operationName;
 
         SendToServer::dispatch([
@@ -49,6 +49,7 @@ class Monitor
             'request' => [
                 'user_id' => auth()->id(),
                 'server' => $request->server('HOSTNAME') ?? $_ENV['HOSTNAME'],
+                'session' => session()->getId(),
                 'method' => $request->method(),
                 'url' => $request->root(),
                 'uri' => $path,
@@ -56,9 +57,18 @@ class Monitor
                 'request_length' => strlen($request->getContent()),
                 'response_code' => $response->getStatusCode(),
                 'response_length' => strlen($response->getContent()),
-                'started_at_epoch' => $request->server('REQUEST_TIME_FLOAT'),
+                'started_at_epoch' => $this->startTime($request),
                 'finished_at_epoch' => microtime(true),
             ],
         ])->onQueue(config('web-monitor.queue'));
+    }
+
+    private function startTime($request)
+    {
+        if (defined('LARAVEL_START')) {
+            return LARAVEL_START;
+        }
+
+        return $request->server('REQUEST_TIME_FLOAT');
     }
 }
