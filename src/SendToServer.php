@@ -11,6 +11,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Queue\Middleware\RateLimitedWithRedis;
 
+use Illuminate\Queue\Middleware\ThrottlesExceptions;
+
 class SendToServer implements ShouldQueue
 {
     protected $data;
@@ -57,7 +59,13 @@ class SendToServer implements ShouldQueue
         }
 
         return [
-            (new $rateLimitClass('web-monitor:send-to-server'))->releaseAfter(60),
+            (new $rateLimitClass('web-monitor:send-to-server')), //->releaseAfter(60),
+            new ThrottlesExceptions(10, 5),
         ];
+    }
+
+    public function retryUntil(): DateTime
+    {
+        return now()->addMinutes(120);
     }
 }
