@@ -53,7 +53,7 @@ class Monitor
                 'method' => $request->method(),
                 'url' => $request->root(),
                 'uri' => $path,
-                'content_type' => $this->getContentType(),
+                'content_type' => $this->getContentType($request),
                 'request_length' => strlen($request->getContent()),
                 'response_code' => $response->getStatusCode(),
                 'response_length' => strlen($response->getContent()),
