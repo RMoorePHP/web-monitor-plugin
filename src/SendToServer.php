@@ -13,6 +13,8 @@ use Illuminate\Queue\Middleware\RateLimitedWithRedis;
 
 use Illuminate\Queue\Middleware\ThrottlesExceptions;
 
+use Illuminate\Support\Carbon;
+
 class SendToServer implements ShouldQueue
 {
     protected $data;
@@ -64,7 +66,7 @@ class SendToServer implements ShouldQueue
         ];
     }
 
-    public function retryUntil(): DateTime
+    public function retryUntil(): Carbon
     {
         return now()->addMinutes(120);
     }
