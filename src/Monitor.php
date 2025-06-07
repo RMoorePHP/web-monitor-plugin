@@ -53,7 +53,7 @@ class Monitor
                 'method' => $request->method(),
                 'url' => $request->root(),
                 'uri' => $path,
-                'content_type' => $request->getContentType(),
+                'content_type' => $this->getContentType(),
                 'request_length' => strlen($request->getContent()),
                 'response_code' => $response->getStatusCode(),
                 'response_length' => strlen($response->getContent()),
@@ -70,5 +70,17 @@ class Monitor
         }
 
         return $request->server('REQUEST_TIME_FLOAT');
+    }
+
+    private function getContentType($request) : string {
+        if (method_exists($request, 'getContentType')) {
+            return $request->getContentType();
+        }
+
+        if (method_exists($request, 'getContentTypeFormat')) {
+            return $request->getContentTypeFormat();
+        }
+
+        return 'Unknown';
     }
 }
