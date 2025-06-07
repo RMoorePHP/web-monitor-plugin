@@ -72,7 +72,7 @@ class Monitor
         return $request->server('REQUEST_TIME_FLOAT');
     }
 
-    private function getContentType($request) : string {
+    private function getContentType($request) : ?string {
         if (method_exists($request, 'getContentType')) {
             return $request->getContentType();
         }
@@ -81,6 +81,6 @@ class Monitor
             return $request->getContentTypeFormat();
         }
 
-        return 'Unknown';
+        return null;
     }
 }
