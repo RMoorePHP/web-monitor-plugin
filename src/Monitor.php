@@ -3,6 +3,7 @@ namespace RMoore\WebMonitor;
 
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Client;
+use Illuminate\Database\Events\QueryExecuted;
 
 class Monitor
 {
@@ -13,7 +14,7 @@ class Monitor
     {
         $this->enabled = config('web-monitor.enabled');
 
-        DB::listen(function ($query) {
+        DB::listen(function (QueryExecuted $query) {
             if (!$this->enabled) {
                 return;
             }
@@ -21,8 +22,8 @@ class Monitor
             $endTime = microtime(true);
 
             $this->queries[] = [
-                'database' => $query->connectionName,
-                'driver' => 'mysql',
+                'database' => $query->connection->getNameWithReadWriteType(),
+                'driver' => $query->connection->getDriverTitle(),
                 'query' => $query->sql,
                 'started_at_epoch' => $endTime - ($query->time / 1000),
                 'finished_at_epoch' => $endTime,
